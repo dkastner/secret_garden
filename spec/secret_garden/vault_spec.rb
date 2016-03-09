@@ -13,7 +13,7 @@ describe SecretGarden::Vault do
     subject { vault.fetch secret }
 
     context 'vault has our secret with the given property' do
-      let(:vault_secret) { double data: { 'archimedes' => 'eureka!' } }
+      let(:vault_secret) { double data: { archimedes: 'eureka!' } }
       before { allow(vault).to receive(:fetch_from_vault).and_return vault_secret }
 
       it { is_expected.to eq 'eureka!' }
