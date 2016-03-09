@@ -10,6 +10,7 @@ module SecretGarden
   def self.add_backend(val)
     klass = SecretGarden.const_get(val.to_s.capitalize)
     @backends = backends + [klass.new(map)]
+    nil
   end
 
   def self.backends

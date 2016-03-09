@@ -15,7 +15,7 @@ module SecretGarden
           "Vault does not have secret at #{secret.path.inspect}"
       end
 
-      unless value = vault_secret.data[secret.property]
+      unless value = vault_secret.data[secret.property.to_sym]
         raise PropertyNotDefined,
           "Vault does not have secret at #{secret.path}:#{secret.property}"
       end
@@ -24,7 +24,7 @@ module SecretGarden
     end
 
     def fetch_from_vault(path)
-      Vault.logical.read path
+      ::Vault.logical.read path
     end
 
   end
