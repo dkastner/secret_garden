@@ -23,6 +23,15 @@ module SecretGarden
     end
   end
 
+  def self.fetch!(name)
+    value = fetch(name)
+    if value.nil?
+      raise(SecretNotDefined, "None of your backends have #{name}")
+    else
+      value
+    end
+  end
+
   def self.map
     @map ||= SecretGarden::Map.new root: secret_file_path, env: env
   end

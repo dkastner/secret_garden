@@ -55,4 +55,23 @@ describe SecretGarden do
 
   end
 
+  describe '.fetch!' do
+    subject { described_class.fetch! 'something' }
+
+    context 'secret was found somewhere' do
+      before { allow(described_class).to receive(:fetch).and_return 'ok' }
+
+      it { is_expected.to eq 'ok' }
+    end
+ 
+    context 'secret not found' do
+      before { allow(described_class).to receive(:fetch).and_return nil }
+
+      it 'raises an error' do
+        expect { subject }.to raise_error SecretGarden::SecretNotDefined
+      end
+    end
+
+  end
+
 end
