@@ -46,7 +46,7 @@ SecretGarden:
 # download a million gems like you do with Fog.
 require 'secret_garden/vault'
 
-SecretGarden.backends << :vault
+SecretGarden.add_backend :vault
 
 s3 = AWS::S3.new access_key_id: SecretGarden.fetch('AWS_ACCESS_KEY_ID')
 ```
