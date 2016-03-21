@@ -74,4 +74,14 @@ describe SecretGarden do
 
   end
 
+  describe '.expose' do
+
+    it 'sets the desired env var' do
+      allow(described_class).to receive(:fetch!).and_return 'the secret'
+      described_class.expose 'MY_SUPER_SECRET'
+      expect(ENV['MY_SUPER_SECRET']).to eq 'the secret'
+    end
+
+  end
+
 end
