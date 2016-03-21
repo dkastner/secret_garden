@@ -32,6 +32,10 @@ module SecretGarden
     end
   end
 
+  def self.expose(name)
+    ENV[name] ||= fetch!(name)
+  end
+
   def self.map
     @map ||= SecretGarden::Map.new root: secret_file_path, env: env
   end

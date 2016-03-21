@@ -51,6 +51,29 @@ SecretGarden.add_backend :vault
 s3 = AWS::S3.new access_key_id: SecretGarden.fetch('AWS_ACCESS_KEY_ID')
 ```
 
+### In Rails
+
+Your app may need certain environment variables that should fall back to being
+read from vault if not set, such as DATABASE_URL. Simply modify
+config/application.rb to pre-load them:
+
+``` ruby
+# config/application.rb
+require File.expand_path('../boot', __FILE__)
+require File.expand_path('../preinitialize', __FILE__)
+
+require "rails"
+# etc ...
+```
+
+``` ruby
+# config/preinitialize.rb
+require 'secret_garden'
+require 'vault'
+
+SecretGarden.export 'DATABASE_URL'
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
