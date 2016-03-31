@@ -37,7 +37,7 @@ module SecretGarden
   end
 
   def self.map
-    @map ||= SecretGarden::Map.new root: secret_file_path, env: env
+    @map ||= SecretGarden::Map.new root: secret_file_path
   end
 
   def self.secret_file_path=(val)
@@ -46,12 +46,4 @@ module SecretGarden
   def self.secret_file_path
     @secret_file_path ||= Dir.pwd
   end
-
-  def self.env=(val)
-    @env = val
-  end
-  def self.env
-    @env ||= 'development'  # sane default?
-  end
-
 end
