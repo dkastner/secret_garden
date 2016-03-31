@@ -6,7 +6,7 @@ module SecretGarden
 
     attr_accessor :root
 
-    def initialize(root: Dir.pwd, env: nil)
+    def initialize(root: Dir.pwd)
       self.root = root
     end
 
@@ -37,7 +37,9 @@ module SecretGarden
 
     def parse_secret(line)
       name, path, property = line.scan(/([^\s]+)\s+([^:]+)(:.*)?/).first
-      path.gsub! /@ENV@/, SecretGarden.env
+      path.gsub!(/\$(?:([a-zA-Z_][a-zA-Z0-9_]*)|{([a-zA-Z_][a-zA-Z0-9_]*)})/) do
+        ENV.fetch($1 || $2)
+      end
       [name, path, property.to_s[1..-1]]
     end
   end
