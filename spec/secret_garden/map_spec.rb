@@ -7,7 +7,13 @@ require 'secret_garden/map'
 
 describe SecretGarden::Map do
   let(:pwd) { Dir.mktmpdir }
-  let(:map) { described_class.new root: pwd, env: 'myenv' }
+  let(:map) { described_class.new root: pwd }
+
+  before do
+    allow(ENV).to receive(:fetch).with('VAULT_ENV') do
+      'myenv'
+    end
+  end
 
   after { FileUtils.remove_entry pwd }
 
@@ -20,7 +26,7 @@ describe SecretGarden::Map do
 FOO      path/to/foo
 BAR_COOL path/to/bar:rab
 BAZ      overwrite
-BAZ      path/to/@ENV@/baz:zab
+BAZ      path/to/$VAULT_ENV/baz:zab
         SECRETS
       end
 
@@ -32,7 +38,11 @@ BAZ      path/to/@ENV@/baz:zab
   end
 
   describe '#parse_secret' do
-    before { allow(SecretGarden).to receive(:env).and_return 'awesome' }
+    before do
+      allow(ENV).to receive(:fetch).with('VAULT_ENV') do
+        'awesome'
+      end
+    end
 
     subject { map.parse_secret line }
 
@@ -48,8 +58,14 @@ BAZ      path/to/@ENV@/baz:zab
       it { is_expected.to eq ['SECRET', 'path/to/me', 'item'] }
     end
 
-    context 'secret has an @ENV@ placeholder in its path' do
-      let(:line) { 'SECRET    path/to/@ENV@/me:item' }
+    context 'secret has an environment variable in its path' do
+      let(:line) { 'SECRET    path/to/$VAULT_ENV/me:item' }
+
+      it { is_expected.to eq ['SECRET', 'path/to/awesome/me', 'item'] }
+    end
+
+    context 'secret has a bracketed environment variable in its path' do
+      let(:line) { 'SECRET    path/to/${VAULT_ENV}/me:item' }
 
       it { is_expected.to eq ['SECRET', 'path/to/awesome/me', 'item'] }
     end
