@@ -38,9 +38,16 @@ module SecretGarden
     def parse_secret(line)
       name, path, property = line.scan(/([^\s]+)\s+([^:]+)(:.*)?/).first
       path.gsub!(/\$(?:([a-zA-Z_][a-zA-Z0-9_]*)|{([a-zA-Z_][a-zA-Z0-9_]*)})/) do
-        ENV.fetch($1 || $2)
+        fetch_env_var($1 || $2)
       end
       [name, path, property.to_s[1..-1]]
+    end
+
+    def fetch_env_var(name)
+      unless val = ENV[name]
+        STDERR.puts "WARNING: can't find environment variable #{name} needed in Secretfile"
+      end
+      val
     end
   end
 

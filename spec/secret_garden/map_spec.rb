@@ -9,10 +9,10 @@ describe SecretGarden::Map do
   let(:pwd) { Dir.mktmpdir }
   let(:map) { described_class.new root: pwd }
 
-  before do
-    allow(ENV).to receive(:fetch).with('VAULT_ENV') do
-      'myenv'
-    end
+  around do |example|
+    ENV['VAULT_ENV'] = 'myenv'
+    example.call
+    ENV.delete 'VAULT_ENV'
   end
 
   after { FileUtils.remove_entry pwd }
@@ -38,11 +38,6 @@ BAZ      path/to/$VAULT_ENV/baz:zab
   end
 
   describe '#parse_secret' do
-    before do
-      allow(ENV).to receive(:fetch).with('VAULT_ENV') do
-        'awesome'
-      end
-    end
 
     subject { map.parse_secret line }
 
@@ -61,13 +56,24 @@ BAZ      path/to/$VAULT_ENV/baz:zab
     context 'secret has an environment variable in its path' do
       let(:line) { 'SECRET    path/to/$VAULT_ENV/me:item' }
 
-      it { is_expected.to eq ['SECRET', 'path/to/awesome/me', 'item'] }
+      it { is_expected.to eq ['SECRET', 'path/to/myenv/me', 'item'] }
     end
 
     context 'secret has a bracketed environment variable in its path' do
       let(:line) { 'SECRET    path/to/${VAULT_ENV}/me:item' }
 
-      it { is_expected.to eq ['SECRET', 'path/to/awesome/me', 'item'] }
+      it { is_expected.to eq ['SECRET', 'path/to/myenv/me', 'item'] }
+    end
+
+    context 'secret has undefined environment variable in its path' do
+      let(:line) { 'SECRET    path/to/${OMGNOTDEFINED}/me:item' }
+
+      it { is_expected.to eq ['SECRET', 'path/to//me', 'item'] }
+      
+      it 'warns' do
+        expect(STDERR).to receive(:puts)
+        subject
+      end
     end
 
   end
