@@ -1,3 +1,9 @@
+0.2.0 / 2016-08-22
+
+* Semi-breaking changes
+
+  * Don't blow up if env var in Secretfile is missing, just STDERR it
+
 0.1.0 / 2016-05-04
 
 * Breaking changes
