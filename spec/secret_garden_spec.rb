@@ -31,22 +31,22 @@ describe SecretGarden do
       let(:backends) { [backend1, backend2] }
 
       context 'no backend has value' do
-        let(:backend1) { double fetch_and_cache: nil }
+        let(:backend1) { double fetch: nil }
         let(:backend2) { backend1 }
 
         it { is_expected.to be_nil }
       end
 
       context 'first backend has value' do
-        let(:backend1) { double fetch_and_cache: 'needle' }
-        let(:backend2) { double fetch_and_cache: nil }
+        let(:backend1) { double fetch: 'needle' }
+        let(:backend2) { double fetch: nil }
 
         it { is_expected.to eq 'needle' }
       end
 
       context 'last backend has value' do
-        let(:backend1) { double fetch_and_cache: nil }
-        let(:backend2) { double fetch_and_cache: 'needle' }
+        let(:backend1) { double fetch: nil }
+        let(:backend2) { double fetch: 'needle' }
 
         it { is_expected.to eq 'needle' }
       end

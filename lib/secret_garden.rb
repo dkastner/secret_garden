@@ -19,7 +19,7 @@ module SecretGarden
 
   def self.fetch(name)
     backends.inject(nil) do |value, backend|
-      value ||= backend.fetch_and_cache(name)
+      value ||= backend.fetch(name)
     end
   end
 
