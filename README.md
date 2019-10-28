@@ -74,6 +74,18 @@ require 'vault'
 SecretGarden.export 'DATABASE_URL'
 ```
 
+### Vault configurations
+
+For vault, you may want to specify retry behavior. You can do this with:
+
+```
+SecretGarden.add_backend :vault,
+  with_retries: [
+    Vault::HTTPConnectionError,
+    attempts: 42
+  ]
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

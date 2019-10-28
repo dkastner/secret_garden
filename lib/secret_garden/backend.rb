@@ -6,9 +6,12 @@ module SecretGarden
 
     attr_accessor :map, :cache
 
-    def initialize(map)
+    def initialize(map, **options)
       self.map = map
       self.cache = {}
+      options.each do |key, val|
+        send "#{key}=", val
+      end
     end
 
     def fetch_and_cache(name)

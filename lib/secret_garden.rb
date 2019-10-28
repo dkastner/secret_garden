@@ -7,9 +7,9 @@ module SecretGarden
 
   class SecretNotDefined < StandardError; end
 
-  def self.add_backend(val)
+  def self.add_backend(val, **options)
     klass = SecretGarden.const_get(val.to_s.capitalize)
-    @backends = backends + [klass.new(map)]
+    @backends = backends + [klass.new(map, **options)]
     nil
   end
 

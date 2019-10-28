@@ -9,6 +9,9 @@ module SecretGarden
     class SecretNotDefined < StandardError; end
     class PropertyNotDefined < StandardError; end
 
+    # Options for SecretGarden.add_backend
+    attr_accessor :with_retries
+
     def fetch(secret)
       unless vault_secret = fetch_from_vault(secret.path)
         raise SecretNotDefined,
@@ -24,7 +27,13 @@ module SecretGarden
     end
 
     def fetch_from_vault(path)
-      ::Vault.logical.read path
+      if with_retries
+        ::Vault.with_retries(*with_retries) do
+          ::Vault.logical.read path
+        end
+      else
+        ::Vault.logical.read path
+      end
     end
 
   end

@@ -3,7 +3,7 @@ require 'spec_helper'
 require 'secret_garden/vault'
 
 describe SecretGarden::Vault do
-  let(:map) { double entries: entries }
+  let(:map) { double entries: [] }
   let(:vault) { described_class.new map }
 
   describe '#fetch' do
@@ -33,6 +33,29 @@ describe SecretGarden::Vault do
 
       it 'raises an error' do
         expect { subject }.to raise_error(described_class::SecretNotDefined)
+      end
+    end
+
+  end
+
+  describe '#fetch_from_vault' do
+    before { allow(::Vault).to receive(:logical).and_return(double(read: nil)) }
+
+    subject { vault.fetch_from_vault 'foo' }
+
+    context 'no retries specified' do
+      it 'reads without retries' do
+        expect(::Vault).to_not receive(:with_retries)
+        subject
+      end
+    end
+
+    context 'with retries specified' do
+      let(:vault) { described_class.new map, with_retries: [StandardError, attempts: 3] }
+
+      it 'tells vault to retry requests' do
+        expect(::Vault).to receive(:with_retries)
+        subject
       end
     end
 
