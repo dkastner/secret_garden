@@ -45,7 +45,7 @@ describe SecretGarden::Vault do
 
     context 'no retries specified' do
       it 'reads without retries' do
-        expect(::Vault).to_not receive(:with_retries)
+        expect(::Vault.logical).to_not receive(:with_retries)
         subject
       end
     end
@@ -54,7 +54,7 @@ describe SecretGarden::Vault do
       let(:vault) { described_class.new map, with_retries: [StandardError, attempts: 3] }
 
       it 'tells vault to retry requests' do
-        expect(::Vault).to receive(:with_retries)
+        expect(::Vault.logical).to receive(:with_retries)
         subject
       end
     end

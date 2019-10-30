@@ -28,7 +28,7 @@ module SecretGarden
 
     def fetch_from_vault(path)
       if with_retries
-        ::Vault.with_retries(*with_retries) do
+        ::Vault.logical.with_retries(*with_retries) do
           ::Vault.logical.read path
         end
       else
